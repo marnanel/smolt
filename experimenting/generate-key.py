@@ -6,6 +6,8 @@ from struct import pack
 import base64
 import hashlib
 
+FILENAME = 'test-key.rsa'
+
 # XXX duplicated
 def base64url_encode(data):
     """
@@ -51,3 +53,9 @@ print('Magic signature: RSA.{0}.{1}'.format(
     base64url_encode(bignum_to_bytes(key.n)),
     base64url_encode(bignum_to_bytes(key.e)),
     ))
+
+f = open(FILENAME, 'wb')
+f.write(key.exportKey('PEM'))
+f.close()
+print('Key written to '+FILENAME+'.')
+
