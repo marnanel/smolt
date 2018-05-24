@@ -25,7 +25,7 @@ def base64url_encode(data):
     """
     return str(base64.b64encode(data,
         altchars=b'-_'),
-            encoding="ASCII").replace('=','')
+            encoding="ASCII")
 
 def base64url_encode_str(s):
     return base64url_encode(bytes(s, encoding='ASCII'))
@@ -34,7 +34,7 @@ def make_envelope(data, secret_key, key_id=None):
 
     signature_base_string = '.'.join([
             base64url_encode_str(data),
-            base64url_encode_str('application/atom+xml'),
+            base64url_encode_str('application/xml'),
             base64url_encode_str('base64url'),
             base64url_encode_str('RSA-SHA256'),
             ])
@@ -49,7 +49,7 @@ def make_envelope(data, secret_key, key_id=None):
 
     result = """<?xml version='1.0' encoding='UTF-8'?>
 <me:env xmlns:me='http://salmon-protocol.org/ns/magic-env'>
-  <me:data type='application/atom+xml'>
+  <me:data type='application/xml'>
 """
 
     result += base64url_encode_str(data)
@@ -59,10 +59,10 @@ def make_envelope(data, secret_key, key_id=None):
   <me:encoding>base64url</me:encoding>
   <me:alg>RSA-SHA256</me:alg>"""
 
-    if key_id is not None:
-        result += '<me:sig key_id="%s">\n' % (key_id,)
+    if key_id is None:
+        result += '<me:sig key_id="">\n'
     else:
-        result += '<me:sig>\n'
+        result += '<me:sig key_id="%s">\n' % (key_id,)
 
     result += b64_signature
 
